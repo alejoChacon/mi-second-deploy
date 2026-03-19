@@ -1,0 +1,34 @@
+services:
+
+  db:
+    image: postgres:15
+    container_name: postgres_alejo
+    environment:
+      POSTGRES_DB: task_db
+      POSTGRES_USER: task_user
+      POSTGRES_PASSWORD: task_pass
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: redis_alejo
+    ports:
+      - "6379:6379"
+    depends_on:
+      - db
+
+  web:
+    build: .
+    container_name: deploy_django
+    env_file:
+      - .env
+    command: >
+      sh -c "python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
