@@ -12,8 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Ejecutamos collectstatic para que se cree la carpeta 'staticfiles' dentro de la imagen
-# Usamos --noinput para que el proceso no se detenga pidiendo confirmación
-RUN python manage.py collectstatic --noinput
-
 CMD [ "gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000" ]
